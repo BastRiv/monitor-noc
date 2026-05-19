@@ -1,0 +1,233 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Monitoreo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <ion-refresher slot="fixed" (ionRefresh)="refrescar($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+  <app-error-banner></app-error-banner>
+
+  <!-- Estado general -->
+<div class="status-header">
+  <div class="overall-dot"
+    [class.err]="hasError">
+  </div>
+  <span [class.err]="hasError">
+    {{ hasError ? 'Sin conexión' : 'En línea' }}
+  </span>
+</div>
+
+  <ion-list>
+
+    <!-- WAN -->
+    <ion-item button detail="false" (click)="toggle('wan')">
+      <div slot="start" class="group-icon wan">
+        <ion-icon name="globe-outline"></ion-icon>
+      </div>
+      <ion-label>
+        <h2>Red WAN</h2>
+        <p class="group-sub">
+          {{ hasError ? '' : '↓ ' + (totalIn | number:'1.2-2') + ' · ↑ ' + (totalOut | number:'1.2-2') + ' Mbps' }}
+        </p>
+      </ion-label>
+      <span class="pill"
+        [class.ok]="(listaWan | okWan) === listaWan.length && !hasError"
+        [class.err]="(listaWan | okWan) < listaWan.length || hasError">
+        {{ hasError ? 'Sin datos' : (listaWan | okWan) + '/' + listaWan.length }}
+      </span>
+      <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+    </ion-item>
+
+    @if (expanded['wan']) {
+      <div class="detail-panel">
+        @for (red of listaWan; track red.iface) {
+          <ion-item lines="full">
+            <div slot="start" class="dot" [class.ok]="red.status === 'OK'" [class.err]="red.status !== 'OK'"></div>
+            <ion-label>
+              <p class="detail-name">{{ red.name }}</p>
+              <p class="detail-meta">↓{{ red.in_mbps }} · ↑{{ red.out_mbps }} Mbps</p>
+            </ion-label>
+            <span slot="end" class="pill"
+              [class.ok]="red.status === 'OK'"
+              [class.err]="red.status !== 'OK'">
+              {{ red.status }}
+            </span>
+          </ion-item>
+        }
+      </div>
+    }
+
+    <!-- Docker -->
+    <ion-item button detail="false" (click)="toggle('docker')">
+      <div slot="start" class="group-icon docker">
+        <ion-icon name="cube-outline"></ion-icon>
+      </div>
+      <ion-label>
+        <h2>Docker</h2>
+        <p class="group-sub">
+          {{ hasError ? '' : docker.total + ' contenedores activos' }}
+        </p>
+      </ion-label>
+      <span slot="end" class="pill"
+        [class.ok]="docker.down === 0 && !hasError"
+        [class.err]="docker.down > 0 || hasError">
+        @if (hasError) {
+          Sin datos
+        } @else {
+          {{ docker.total - docker.down }}/{{ docker.total }}
+        }
+      </span>
+      <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+    </ion-item>
+
+    @if (expanded['docker']) {
+      <div class="detail-panel">
+        @for (c of listaDocker; track c.name) {
+          <ion-item lines="full">
+            <div slot="start" class="dot" [class.ok]="c.ok" [class.err]="!c.ok"></div>
+            <ion-label>
+              <p class="detail-name">{{ c.name }}</p>
+            </ion-label>
+            <span slot="end" class="pill"
+              [class.ok]="c.ok"
+              [class.err]="!c.ok">
+              {{ c.ok ? 'OK' : 'ERROR' }}
+            </span>
+          </ion-item>
+        }
+      </div>
+    }
+
+    <!-- UPS -->
+    <ion-item button detail="false" (click)="toggle('ups')">
+      <div slot="start" class="group-icon ups">
+        <ion-icon name="battery-charging-outline"></ion-icon>
+      </div>
+      <ion-label>
+        <h2>UPS</h2>
+        <p class="group-sub">
+          {{ hasError ? '' : 'Carga mín. ' + minCharge + '%' }}
+        </p>
+      </ion-label>
+      <span slot="end" class="pill"
+        [class.ok]="(listaUps | downCount) === 0 && !hasError"
+        [class.err]="(listaUps | downCount) > 0 || hasError">
+        {{ hasError ? 'Sin datos' : (listaUps | okCount) + '/' + listaUps.length }}
+
+      </span>
+      <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+    </ion-item>
+
+    @if (expanded['ups']) {
+      <div class="detail-panel">
+        @for (ups of listaUps; track ups.name) {
+          <ion-item lines="full">
+            <div slot="start" class="dot" [class.ok]="ups.ok" [class.err]="!ups.ok"></div>
+            <ion-label>
+              <p class="detail-name">{{ ups.name }}</p>
+              <p class="detail-meta">Carga: {{ ups.charge }}%</p>
+            </ion-label>
+            <span slot="end" class="pill"
+              [class.ok]="ups.ok"
+              [class.err]="!ups.ok">
+              {{ ups.ok ? 'EN LÍNEA' : 'MODO BATERÍA' }}
+            </span>
+          </ion-item>
+        }
+      </div>
+    }
+      <!-- Unifi -->
+        <ion-item>
+          <div slot="start" class="group-icon unifi">
+            <ion-icon name="wifi-outline"></ion-icon>
+          </div>
+          <ion-label>
+            <h2>Usuarios Conectados</h2>
+            <p class="group-sub">
+              {{ hasError ? '' : unifi.wifi + ' Wifi · ' + unifi.lan + ' Cableados' }}
+            </p>
+          </ion-label>
+          <span slot="end" class="pill"
+            [class.ok]="!hasError"
+            [class.err]="hasError">
+            {{ hasError ? 'Sin datos' : unifi.total + ' activos' }}
+          </span>
+        </ion-item>
+    @if (expanded['unifi']) {
+      <div class="detail-panel">
+        <ion-item lines="full">
+          <ion-icon slot="start" name="wifi-outline" style="color:#3fb950; font-size:16px;"></ion-icon>
+          <ion-label><p class="detail-name">WiFi</p></ion-label>
+          <span slot="end" class="detail-meta">{{ unifi.wifi }} conectados</span>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon slot="start" name="git-network-outline" style="color:#3fb950; font-size:16px;"></ion-icon>
+          <ion-label><p class="detail-name">Cableados</p></ion-label>
+          <span slot="end" class="detail-meta">{{ unifi.lan }} conectados</span>
+        </ion-item>
+      </div>
+    }
+
+    <!-- Hosts -->
+    <ion-list style="margin-top: 12px;">
+
+  <ion-item button routerLink="/details/servers">
+    <div slot="start" class="group-icon hosts">
+      <ion-icon name="server-outline"></ion-icon>
+    </div>
+    <ion-label>
+      <h2>Servidores</h2>
+      <p class="group-sub">
+        {{ hasError ? '' : servidores.length + ' monitoreados' }}
+      </p>
+    </ion-label>
+    <span slot="end" class="pill"
+      [class.ok]="(servidores | downCount) === 0 && !hasError"
+      [class.err]="(servidores | downCount) > 0 || hasError">
+      {{ hasError ? 'Sin datos' : (servidores | okCount) + '/' + servidores.length }}
+    </span>
+    <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button routerLink="/details/switches">
+    <div slot="start" class="group-icon hosts">
+      <ion-icon name="git-merge-outline"></ion-icon>
+    </div>
+    <ion-label>
+      <h2>Switches y APs</h2>
+      <p class="group-sub">
+        {{ hasError ? '' : switches.length + ' monitoreados' }}
+      </p>
+    </ion-label>
+    <span slot="end" class="pill"
+      [class.ok]="(switches | downCount) === 0 && !hasError"
+      [class.err]="(switches | downCount) > 0 || hasError">
+      {{ hasError ? 'Sin datos' : (switches | okCount) + '/' + switches.length }}
+    </span>
+    <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+  </ion-item>
+
+  <ion-item button routerLink="/details/camaras">
+    <div slot="start" class="group-icon hosts">
+      <ion-icon name="videocam-outline"></ion-icon>
+    </div>
+    <ion-label>
+      <h2>Cámaras</h2>
+      <p class="group-sub">
+        {{ hasError ? '' : camaras.length + ' monitoreadas' }}
+      </p>
+    </ion-label>
+    <span slot="end" class="pill"
+      [class.ok]="(camaras | downCount) === 0 && !hasError"
+      [class.err]="(camaras | downCount) > 0 || hasError">
+      {{ hasError ? 'Sin datos' : (camaras | okCount) + '/' + camaras.length }}
+    </span>
+    <ion-icon name="chevron-forward-sharp" slot="end"></ion-icon>
+  </ion-item>
+
+    </ion-list>
+  </ion-list>
+</ion-content>

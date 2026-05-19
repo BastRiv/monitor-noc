@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Switches y AP's</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+   <app-error-banner></app-error-banner>
+
+  <!-- Caídas -->
+  @if (switchesDown.length > 0) {
+    <ion-list-header>
+      <ion-label color="danger">
+        Fuera de línea ({{ switchesDown.length }})
+      </ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      @for (switch of switchesDown; track switch.host) {
+        <ion-item>
+          <div slot="start" class="group-icon hosts">
+            <ion-icon name="git-merge-outline"></ion-icon>
+          </div>          
+          <ion-label>
+          <h2>{{ switch.host }}</h2>
+          <p>{{ getIp(switch.output) }} · {{ getRta(switch.output) }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="danger">Fuera de línea</ion-badge>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- OK -->
+  <ion-list-header>
+    <ion-label color="success">
+      En línea ({{ switchesOK.length }})
+    </ion-label>
+  </ion-list-header>
+
+  <ion-list>
+    @for (switch of switchesOK; track switch.host) {
+      <ion-item>
+          <div slot="start" class="group-icon hosts">
+            <ion-icon name="git-merge-outline"></ion-icon>
+          </div>
+        <ion-label>
+          <h2>{{ switch.host }}</h2>
+          <p> IP: {{ getIp(switch.output) }} · Consumo: {{ getRta(switch.output) }}</p>
+        </ion-label>
+        <ion-badge slot="end" color="success">En línea</ion-badge>
+      </ion-item>
+    }
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "monitor-NOC",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

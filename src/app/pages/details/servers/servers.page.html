@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Servidores</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+   <app-error-banner></app-error-banner>
+
+  <!-- Caídas -->
+  @if (serversDown.length > 0) {
+    <ion-list-header>
+      <ion-label color="danger">
+        Fuera de línea ({{ serversDown.length }})
+      </ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      @for (server of serversDown; track server.host) {
+        <ion-item>
+          <div slot="start" class="group-icon hosts">
+            <ion-icon name="server-outline"></ion-icon>
+          </div>          
+          <ion-label>
+          <h2>{{ server.host }}</h2>
+          <p>{{ getIp(server.output) }} · {{ getRta(server.output) }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="danger">Fuera de línea</ion-badge>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- OK -->
+  <ion-list-header>
+    <ion-label color="success">
+      En línea ({{ serversOK.length }})
+    </ion-label>
+  </ion-list-header>
+
+  <ion-list>
+    @for (server of serversOK; track server.host) {
+      <ion-item>
+          <div slot="start" class="group-icon hosts">
+            <ion-icon name="server-outline"></ion-icon>
+          </div>
+        <ion-label>
+          <h2>{{ server.host }}</h2>
+          <p> IP: {{ getIp(server.output) }} · Consumo: {{ getRta(server.output) }}</p>
+        </ion-label>
+        <ion-badge slot="end" color="success">En línea</ion-badge>
+      </ion-item>
+    }
+  </ion-list>
+
+</ion-content>

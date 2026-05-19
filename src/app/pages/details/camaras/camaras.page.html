@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Cámaras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+   <app-error-banner></app-error-banner>
+
+  <!-- Caídas -->
+  @if (camarasDown.length > 0) {
+    <ion-list-header>
+      <ion-label color="danger">
+        Fuera de línea ({{ camarasDown.length }})
+      </ion-label>
+    </ion-list-header>
+
+    <ion-list>
+      @for (cam of camarasDown; track cam.host) {
+        <ion-item>
+          <div slot="start" class="group-icon hosts">
+            <ion-icon name="videocam-outline"></ion-icon>
+          </div>
+          <ion-label>
+          <h2>{{ cam.host }}</h2>
+          <p> IP: {{ getIp(cam.output) }} · Consumo: {{ getRta(cam.output) }}</p>
+          </ion-label>
+          <ion-badge slot="end" color="danger">Fuera de línea</ion-badge>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- OK -->
+  <ion-list-header>
+    <ion-label color="success">
+      En línea ({{ camarasOK.length }})
+    </ion-label>
+  </ion-list-header>
+
+  <ion-list>
+    @for (cam of camarasOK; track cam.host) {
+      <ion-item>
+        <div slot="start" class="group-icon hosts">
+          <ion-icon name="videocam-outline"></ion-icon>
+        </div>       
+        <ion-label>
+          <h2>{{ cam.host }}</h2>
+          <p> IP: {{ getIp(cam.output) }} · Consumo: {{ getRta(cam.output) }}</p>
+        </ion-label>
+        <ion-badge slot="end" color="success">En línea</ion-badge>
+      </ion-item>
+    }
+  </ion-list>
+
+</ion-content>

@@ -1,0 +1,139 @@
+ion-content {
+  --background: #0f1117;
+}
+
+ion-toolbar {
+  --background: #161b22;
+  --color: #f0f6fc;
+  --border-color: #21262d;
+}
+
+ion-badge {
+  --background: #3d1a19;
+  --color: #f85149;
+}
+
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  background: #161b22;
+  border-radius: 12px;
+  margin-bottom: 8px;
+
+  .overall-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3fb950;
+    flex-shrink: 0;
+
+    &.warn { background: #e3b341; }
+    &.err  { background: #f85149; }
+  }
+
+  span {
+    font-size: 13px;
+    color: #3fb950;
+    font-weight: 500;
+
+    &.warn { color: #e3b341; }
+    &.err  { color: #f85149; }
+  }
+}
+
+ion-list {
+  background: #0f1117;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 0.5px solid #21262d;
+  padding: 0;
+}
+
+ion-item {
+  --background: #0f1117;
+  --background-hover: #161b22;
+  --border-color: #21262d;
+  --color: #f0f6fc;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 64px;
+}
+
+.group-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 16px;
+  }
+
+  &.wan    { background: #0c2d6b; ion-icon { color: #58a6ff; } }
+  &.docker { background: #0c3d2d; ion-icon { color: #3fb950; } }
+  &.ups    { background: #3d2a0c; ion-icon { color: #e3b341; } }
+  &.unifi  { background: #2a0c3d; ion-icon { color: #a78bfa; } }
+  &.hosts  { background: #0c2d6b; ion-icon { color: #58a6ff; } }
+}
+
+.group-sub {
+  font-size: 12px;
+  color: #8b949e;
+  margin-top: 2px;
+}
+
+.pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+
+  &.ok   { background: #1a4020; color: #3fb950; }
+  &.warn { background: #3d2a0c; color: #e3b341; }
+  &.err  { background: #3d1a19; color: #f85149; }
+}
+
+.detail-panel {
+  background: #161b22;
+  border-top: 0.5px solid #21262d;
+  padding: 8px 0;
+
+  ion-item {
+    --background: #161b22;
+    --background-hover: #1e2430;
+    --min-height: 48px;
+  }
+
+  .detail-name {
+    font-size: 13px;
+    color: #c9d1d9;
+  }
+
+  .detail-meta {
+    font-size: 12px;
+    color: #8b949e;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.ok  { background: #3fb950; }
+    &.err { background: #f85149; }
+  }
+
+  ion-button {
+    margin: 8px 16px 4px;
+    --border-radius: 20px;
+    --color: #8b949e;
+    --border-color: #30363d;
+    font-size: 12px;
+  }
+}
